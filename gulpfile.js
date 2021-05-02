@@ -1,8 +1,8 @@
-const { dest, parallel, series, src } = require("gulp");
+const { dest, series, src } = require("gulp");
 const autoprefixer = require("gulp-autoprefixer");
+const cleanCSS = require("gulp-clean-css");
 const del = require("del");
 const uglify = require("gulp-uglify-es").default;
-const cleanCSS = require("gulp-clean-css");
 
 function cleanDist() {
   return del("dist");
