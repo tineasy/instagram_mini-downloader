@@ -1,58 +1,35 @@
-const { dest, parallel, series, src, watch } = require("gulp");
+const { dest, parallel, series, src } = require("gulp");
 const autoprefixer = require("gulp-autoprefixer");
-const concat = require("gulp-concat");
 const del = require("del");
-const gulp_sass = require("gulp-sass");
 const uglify = require("gulp-uglify-es").default;
+const cleanCSS = require("gulp-clean-css");
 
 function cleanDist() {
   return del("dist");
 }
 
 function scripts() {
-  return src(["app/js/main.js", "app/js/**/*.js", "!app/js/main.min.js"])
-    .pipe(concat("main.min.js"))
-    .pipe(uglify())
-    .pipe(dest("app/js"));
+  return src(["src/js/**/*.js"], { base: "src" }).pipe(uglify()).pipe(dest("dist"));
 }
 
 function styles() {
-  return src("app/scss/style.scss")
-    .pipe(concat("style.min.css"))
-    .pipe(gulp_sass({ outputStyle: "compressed" }))
+  return src(["src/css/**/*.css"], { base: "src" })
     .pipe(
       autoprefixer({
-        overrideBrowserslist: ["last 10 version"],
+        overrideBrowserslist: ["defaults"],
         grid: true,
       })
     )
-    .pipe(dest("app/css"));
+    .pipe(cleanCSS())
+    .pipe(dest("dist"));
 }
 
 function build() {
-  return src(
-    [
-      "app/css/bootstrap-reboot.min.css",
-      "app/css/style.min.css",
-      "app/css/**/*.css",
-      "app/js/main.min.js",
-      "app/*.html",
-    ],
-    { base: "app" }
-  ).pipe(dest("dist"));
+  return src(["src/icons/**/*", "src/manifest.json"], { base: "src" }).pipe(dest("dist"));
 }
 
-function watching() {
-  watch(["app/scss/**/*.scss"], styles);
-  watch(["app/js/**/*.js", "!app/js/main.min.js"], scripts);
-  watch(["app/*.html"]).on("change", browserSync.reload);
-}
-
-exports.browsersync = browsersync;
 exports.cleanDist = cleanDist;
 exports.scripts = scripts;
 exports.styles = styles;
-exports.watching = watching;
 
-exports.build = series(cleanDist, images, build);
-exports.default = parallel(styles, scripts, browsersync, watching);
+exports.build = series(cleanDist, build, styles, scripts);
