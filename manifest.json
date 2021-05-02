@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+
+  "name": "Instagram Mini-Downloader",
+  "version": "0.1",
+  "description": "Simple extension which downloads Instagram post image on click, and downloads any kind of story on click on time.",
+  "icons": {
+    "16": "icons/16.png",
+    "32": "icons/32.png",
+    "48": "icons/48.png",
+    "128": "icons/128.png"
+  },
+
+  "host_permissions": ["https://www.instagram.com/*"],
+  "content_scripts": [
+    {
+      "matches": ["https://www.instagram.com/*"],
+      "js": ["./js/download.min.js", "./js/main.js"],
+      "css": ["./css/main.css"]
+    }
+  ]
+}
